@@ -22,14 +22,14 @@ struct card {
         rank = r;
         if (r > 1 && r <= 10) {
             val[0] = r;
-            val[1] = 0;
+            val[1] = r;
         } 
         else if (r == 1) {
             val[0] = r;
             val[1] = 11;
         } else {
             val[0] = 10;
-            val[1] = 0;
+            val[1] = 10;
         }
     }
     void print_card() {
@@ -82,7 +82,30 @@ struct card {
 
 struct hand {
     vector<card> cards;
-    vector<int> value;
+    int val[2];
+    int num_ace;
+    hand() {
+        value[0] = 0;
+        value[1] = 0;
+        num_ace = 0;
+    }
+    void add_card(card c) {
+        cards.push_back(c);
+        if (c.rank == 1){    
+            if (num_ace == 0) {
+                val[0]++;
+                val[1] += 11;
+                num_ace++;
+            } else {
+                val[0]++;
+                val[1]++;
+                num_ace++;
+            }
+        } else {
+            val[0] += c.val[0];
+            val[1] += c.val[1];
+        }
+    }
 };
 
   //==================
@@ -125,6 +148,12 @@ public:
     void print_full_dealer_hand() {
         for (int i = 0; i < dealer_hand.cards.size(); i++)
             dealer_hand.cards[i].print_card();
+    }
+    void deal() {
+        for (int i = 0; i < 2; i++) {
+            // player_hand.add_card()
+        }
+        
     }
 };
 
