@@ -122,6 +122,10 @@ public:
         }
         cout << "and one in the hole" << endl;
     }
+    void print_full_dealer_hand() {
+        for (int i = 0; i < dealer_hand.cards.size(); i++)
+            dealer_hand.cards[i].print_card();
+    }
 };
 
 
