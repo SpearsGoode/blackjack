@@ -85,8 +85,8 @@ struct hand {
     int val[2];
     int num_ace;
     hand() {
-        value[0] = 0;
-        value[1] = 0;
+        val[0] = 0;
+        val[1] = 0;
         num_ace = 0;
     }
     void add_card(card c) {
@@ -131,14 +131,17 @@ public:
         shuffle_deck();
     }
     void print_deck() {
+        cout << endl << "Deck:" << endl;
         for (int i = 0; i < deck.size(); i++)
             deck[i].print_card();
     }
     void print_player_hand() {
+        cout << endl << "Player Hand:" << endl;
         for (int i = 0; i < player_hand.cards.size(); i++)
             player_hand.cards[i].print_card();
     }
     void print_dealer_hand() {
+        cout << endl << "Dealer Hand:" << endl;
         for (int i = 0; i < dealer_hand.cards.size(); i++) {
             if (i == 1) continue;
             dealer_hand.cards[i].print_card();
@@ -146,10 +149,12 @@ public:
         cout << "and one in the hole" << endl;
     }
     void print_full_dealer_hand() {
+
+        cout << endl << "Dealer Hand:" << endl;
         for (int i = 0; i < dealer_hand.cards.size(); i++)
             dealer_hand.cards[i].print_card();
     }
-    void deal() { //FIXME
+    void deal() {
         for (int i = 0; i < 2; i++) {
             player_hand.add_card(deck[deck.size()-1]);
             deck.pop_back();
