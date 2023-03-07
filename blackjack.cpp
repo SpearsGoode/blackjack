@@ -149,11 +149,13 @@ public:
         for (int i = 0; i < dealer_hand.cards.size(); i++)
             dealer_hand.cards[i].print_card();
     }
-    void deal() {
+    void deal() { //FIXME
         for (int i = 0; i < 2; i++) {
-            // player_hand.add_card()
+            player_hand.add_card(deck[deck.size()-1]);
+            deck.pop_back();
+            dealer_hand.add_card(deck[deck.size()-1]);
+            deck.pop_back();
         }
-        
     }
 };
 
@@ -162,5 +164,10 @@ int main()
 {
     blackjack BJ;
     BJ.print_deck();
+    BJ.deal();
+    BJ.print_deck();
+    BJ.print_player_hand();
+    BJ.print_dealer_hand();
+    BJ.print_full_dealer_hand();
     return 0;
 }
