@@ -139,6 +139,10 @@ public:
         cout << endl << "Player Hand:" << endl;
         for (int i = 0; i < player_hand.cards.size(); i++)
             player_hand.cards[i].print_card();
+        cout << "Value: " << player_hand.val[0];
+        if (player_hand.num_ace > 0 && player_hand.val[1] <= 21)
+            cout << " or " << player_hand.val[1];
+        cout << endl;
     }
     void print_dealer_hand() {
         cout << endl << "Dealer Hand:" << endl;
@@ -153,14 +157,46 @@ public:
         cout << endl << "Dealer Hand:" << endl;
         for (int i = 0; i < dealer_hand.cards.size(); i++)
             dealer_hand.cards[i].print_card();
+        cout << "Value: " << dealer_hand.val[0];
+        if (dealer_hand.num_ace > 0 && dealer_hand.val[1] <= 21)
+            cout << " or " << dealer_hand.val[1];
+        cout << endl;
     }
     void deal() {
         for (int i = 0; i < 2; i++) {
-            player_hand.add_card(deck[deck.size()-1]);
-            deck.pop_back();
-            dealer_hand.add_card(deck[deck.size()-1]);
-            deck.pop_back();
+            player_hit();
+            dealer_hit();
         }
+    }
+    void player_turn() {
+        string choice;
+        while (choice != "stand") {
+            cout << "Do you want to hit or stand? (enter 'hit' or 'stand'): ";
+            cin >> choice;
+            cout << endl;
+            if (choice == "stand") break;
+            else if (choice == "hit") {
+                player_hit();
+                print_player_hand();    
+            }
+            else cout << "please enter a valid input." << endl;
+        }
+    }
+    void dealer_turn() {
+        print_full_dealer_hand();
+        while (dealer_hand.val[0] < 17) {
+            dealer_hit();
+            cout << "dealer hit" << endl;
+            print_full_dealer_hand();
+        }
+    }
+    void player_hit() {
+        player_hand.add_card(deck[deck.size()-1]);
+        deck.pop_back();
+    }
+    void dealer_hit() {
+        dealer_hand.add_card(deck[deck.size()-1]);
+        deck.pop_back();
     }
 };
 
@@ -168,11 +204,10 @@ public:
 int main()
 {
     blackjack BJ;
-    BJ.print_deck();
     BJ.deal();
-    BJ.print_deck();
     BJ.print_player_hand();
     BJ.print_dealer_hand();
-    BJ.print_full_dealer_hand();
+    BJ.player_turn();
+    BJ.dealer_turn();
     return 0;
 }
