@@ -116,8 +116,11 @@ public:
             player_hand.cards[i].print_card();
     }
     void print_dealer_hand() {
-        for (int i = 0; i < dealer_hand.cards.size(); i++)
+        for (int i = 0; i < dealer_hand.cards.size(); i++) {
+            if (i == 1) continue;
             dealer_hand.cards[i].print_card();
+        }
+        cout << "and one in the hole" << endl;
     }
 };
 
