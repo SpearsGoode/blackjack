@@ -121,7 +121,9 @@ class blackjack {
         shuffle(deck.begin(), deck.end(), rng);
     }
 public:
+    string winner;
     blackjack() {
+        winner = "none";
         for (int i = 1; i <= 13; i++){
             deck.push_back(card(i, "Hearts"));
             deck.push_back(card(i, "Diamonds"));
@@ -136,16 +138,16 @@ public:
             deck[i].print_card();
     }
     void print_player_hand() {
-        cout << endl << "Player Hand:" << endl;
+        cout << endl << " Player Hand:" << endl;
         for (int i = 0; i < player_hand.cards.size(); i++)
             player_hand.cards[i].print_card();
-        cout << "Value: " << player_hand.val[0];
+        cout << " Value: " << player_hand.val[0];
         if (player_hand.num_ace > 0 && player_hand.val[1] <= 21)
             cout << " or " << player_hand.val[1];
         cout << endl;
     }
     void print_dealer_hand() {
-        cout << endl << "Dealer Hand:" << endl;
+        cout << endl << " Dealer Hand:" << endl;
         for (int i = 0; i < dealer_hand.cards.size(); i++) {
             if (i == 1) continue;
             dealer_hand.cards[i].print_card();
@@ -154,10 +156,10 @@ public:
     }
     void print_full_dealer_hand() {
 
-        cout << endl << "Dealer Hand:" << endl;
+        cout << endl << " Dealer Hand:" << endl;
         for (int i = 0; i < dealer_hand.cards.size(); i++)
             dealer_hand.cards[i].print_card();
-        cout << "Value: " << dealer_hand.val[0];
+        cout << " Value: " << dealer_hand.val[0];
         if (dealer_hand.num_ace > 0 && dealer_hand.val[1] <= 21)
             cout << " or " << dealer_hand.val[1];
         cout << endl;
@@ -171,7 +173,7 @@ public:
     void player_turn() {
         string choice;
         while (choice != "stand") {
-            cout << "Do you want to hit or stand? (enter 'hit' or 'stand'): ";
+            cout << endl << "Do you want to hit or stand? (enter 'hit' or 'stand'): ";
             cin >> choice;
             cout << endl;
             if (choice == "stand") break;
@@ -185,18 +187,35 @@ public:
     void dealer_turn() {
         print_full_dealer_hand();
         while (dealer_hand.val[0] < 17) {
+            cout << endl << "dealer hit" << endl;
             dealer_hit();
-            cout << "dealer hit" << endl;
             print_full_dealer_hand();
         }
     }
     void player_hit() {
         player_hand.add_card(deck[deck.size()-1]);
         deck.pop_back();
+        if (player_hand.val[0] > 21) bust("player");
+        if (player_hand.val[0] == 21 
+        || player_hand.val[1] == 21) 
+            twenty_one("player");
     }
     void dealer_hit() {
         dealer_hand.add_card(deck[deck.size()-1]);
         deck.pop_back();
+        if (dealer_hand.val[0] > 21) bust("dealer");
+        if (dealer_hand.val[0] == 21 
+        || dealer_hand.val[1] == 21) 
+            twenty_one("dealer");
+    }
+    void bust(string l) {
+        cout << " Bust!" << endl;
+        if (l == "player") winner = "dealer";
+        if (l == "dealer") winner = "player";
+    }
+    void twenty_one(string w) {
+        cout << " Blackjack!" << endl;
+        winner = w;
     }
 };
 
