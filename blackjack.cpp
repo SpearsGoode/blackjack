@@ -132,11 +132,15 @@ public:
         }
         shuffle_deck();
     }
+    
+        // Prints the deck (testing)
     void print_deck() {
         cout << endl << "Deck:" << endl;
         for (int i = 0; i < deck.size(); i++)
             deck[i].print_card();
     }
+    
+        // Prints player hand
     void print_player_hand() {
         cout << endl << " Player Hand:" << endl;
         for (int i = 0; i < player_hand.cards.size(); i++)
@@ -146,6 +150,8 @@ public:
             cout << " or " << player_hand.val[1];
         cout << endl;
     }
+
+        // Prints dealer hand with one in the hole
     void print_dealer_hand() {
         cout << endl << " Dealer Hand:" << endl;
         for (int i = 0; i < dealer_hand.cards.size(); i++) {
@@ -154,6 +160,7 @@ public:
         }
         cout << "and one in the hole" << endl;
     }
+        // Prints dealer hand with both cards face up
     void print_full_dealer_hand() {
 
         cout << endl << " Dealer Hand:" << endl;
@@ -164,15 +171,19 @@ public:
             cout << " or " << dealer_hand.val[1];
         cout << endl;
     }
+
+        // Deals two cards to each player
     void deal() {
         for (int i = 0; i < 2; i++) {
             player_hit();
             dealer_hit();
         }
     }
+    
+        // Asks player to hit or stand until Bust, Blackjack, or stand
     void player_turn() {
         string choice;
-        while (choice != "stand") {
+        while (winner == "none") {
             cout << endl << "Do you want to hit or stand? (enter 'hit' or 'stand'): ";
             cin >> choice;
             cout << endl;
@@ -184,14 +195,18 @@ public:
             else cout << "please enter a valid input." << endl;
         }
     }
+
+        // Logic for dealer turn (hits until hard 17, Blackjack, or Bust)
     void dealer_turn() {
         print_full_dealer_hand();
-        while (dealer_hand.val[0] < 17) {
+        while (dealer_hand.val[0] < 17 && winner == "none") {
             cout << endl << "dealer hit" << endl;
             dealer_hit();
             print_full_dealer_hand();
         }
     }
+
+        // Add a card from the deck to the player's hand
     void player_hit() {
         player_hand.add_card(deck[deck.size()-1]);
         deck.pop_back();
@@ -200,22 +215,51 @@ public:
         || player_hand.val[1] == 21) 
             twenty_one("player");
     }
+
+        // Add a card from the deck to the dealer's hand
     void dealer_hit() {
         dealer_hand.add_card(deck[deck.size()-1]);
         deck.pop_back();
         if (dealer_hand.val[0] > 21) bust("dealer");
-        if (dealer_hand.val[0] == 21 
-        || dealer_hand.val[1] == 21) 
+        if (dealer_hand.val[0] == 21 || dealer_hand.val[1] == 21) 
             twenty_one("dealer");
     }
+        // Set winner to player that did not Bust
     void bust(string l) {
         cout << " Bust!" << endl;
         if (l == "player") winner = "dealer";
         if (l == "dealer") winner = "player";
     }
+
+        // Set winner to the player that get Blackjack
     void twenty_one(string w) {
         cout << " Blackjack!" << endl;
         winner = w;
+    }
+
+        // Score the game if no one Busts of gets Blackjack
+    void score() {
+        cout << endl;
+        if (winner == "player")
+            cout << " You Win!" << endl;
+        else if (winner == "dealer")
+            cout << " House Wins!" << endl;
+        else {
+            int player_score = 0;
+            int dealer_score = 0;
+            if (player_hand.val[1] > 21)
+                player_score = player_hand.val[0];
+            else player_score = player_hand.val[1];
+            if (dealer_hand.val[1] > 21)
+                dealer_score = dealer_hand.val[0];
+            else dealer_score = dealer_hand.val[1];
+            if (player_score > dealer_score)
+                cout << " You Win!" << endl;
+            else if (player_score < dealer_score)
+                cout << " House Wins!" << endl;
+            else cout << " Draw!" << endl;
+        }
+        
     }
 };
 
@@ -228,5 +272,6 @@ int main()
     BJ.print_dealer_hand();
     BJ.player_turn();
     BJ.dealer_turn();
+    BJ.score();
     return 0;
 }
