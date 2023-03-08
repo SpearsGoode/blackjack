@@ -179,7 +179,11 @@ class blackjack {
     }
 public:
     string winner;
+    int dealer_wins;
+    int player_wins;
     blackjack() {
+        dealer_wins = 0;
+        player_wins = 0;
         winner = "none";
         for (int i = 1; i <= 13; i++){
             deck.push_back(card(i, "Hearts"));
@@ -252,13 +256,17 @@ public:
         }
     }
 
-        // Score the game if no one Busts of gets Blackjack
+        // Score the game if no one Busts or gets Blackjack. Increment wins and print message regardless
     void score() {
         cout << endl;
-        if (winner == "player")
+        if (winner == "player") {
             cout << " You Win!" << endl;
-        else if (winner == "dealer")
+            ++player_wins;
+        }
+        else if (winner == "dealer") {
             cout << " House Wins!" << endl;
+            ++dealer_wins;
+        }
         else {
             int player_score = 0;
             int dealer_score = 0;
@@ -268,13 +276,18 @@ public:
             if (dealer_hand.val[1] > 21)
                 dealer_score = dealer_hand.val[0];
             else dealer_score = dealer_hand.val[1];
-            if (player_score > dealer_score)
+            if (player_score > dealer_score) {
                 cout << " You Win!" << endl;
-            else if (player_score < dealer_score)
+                ++player_wins;
+            }
+            else if (player_score < dealer_score) {
                 cout << " House Wins!" << endl;
+                ++dealer_wins;
+            }
             else cout << " Draw!" << endl;
         }
-        
+        cout << endl << " Player has won " << player_wins << " games"
+             << endl << " Dealer has won " << dealer_wins << " games" << endl;
     }
         
         // Resets the game
