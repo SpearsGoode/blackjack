@@ -32,6 +32,8 @@ struct card {
             val[1] = 10;
         }
     }
+    
+        // Prints a card
     void print_card() {
         switch (rank) {
         case 1:
@@ -89,6 +91,8 @@ struct hand {
         val[1] = 0;
         num_ace = 0;
     }
+    
+        // Add passed card to the hand 
     void add_card(card c) {
         cards.push_back(c);
         if (c.rank == 1){    
@@ -106,6 +110,14 @@ struct hand {
             val[1] += c.val[1];
         }
     }
+
+        // Reset hand
+    void reset() {
+        cards.clear();
+        val[0] = 0;
+        val[1] = 0;
+        num_ace = 0;
+    }
 };
 
   //==================
@@ -115,10 +127,55 @@ class blackjack {
     vector<card> deck;
     hand dealer_hand;
     hand player_hand;
+    
+        // Shuffles the deck
     void shuffle_deck() {
         random_device rd;
         default_random_engine rng(rd());
         shuffle(deck.begin(), deck.end(), rng);
+    }
+
+        // Prints dealer hand with both cards face up
+    void print_full_dealer_hand() {
+        cout << endl << " Dealer Hand:" << endl;
+        for (int i = 0; i < dealer_hand.cards.size(); i++)
+            dealer_hand.cards[i].print_card();
+        cout << " Value: " << dealer_hand.val[0];
+        if (dealer_hand.num_ace > 0 && dealer_hand.val[1] <= 21)
+            cout << " or " << dealer_hand.val[1];
+        cout << endl;
+    }
+
+        // Add a card from the deck to the player's hand
+    void player_hit() {
+        player_hand.add_card(deck[deck.size()-1]);
+        deck.pop_back();
+        if (player_hand.val[0] > 21) bust("player");
+        if (player_hand.val[0] == 21 
+        || player_hand.val[1] == 21) 
+            twenty_one("player");
+    }
+
+        // Add a card from the deck to the dealer's hand
+    void dealer_hit() {
+        dealer_hand.add_card(deck[deck.size()-1]);
+        deck.pop_back();
+        if (dealer_hand.val[0] > 21) bust("dealer");
+        if (dealer_hand.val[0] == 21 || dealer_hand.val[1] == 21) 
+            twenty_one("dealer");
+    }
+
+        // Set winner to player that did not Bust
+    void bust(string l) {
+        cout << " Bust!" << endl;
+        if (l == "player") winner = "dealer";
+        if (l == "dealer") winner = "player";
+    }
+
+        // Set winner to the player that get Blackjack
+    void twenty_one(string w) {
+        cout << " Blackjack!" << endl;
+        winner = w;
     }
 public:
     string winner;
@@ -160,17 +217,6 @@ public:
         }
         cout << "and one in the hole" << endl;
     }
-        // Prints dealer hand with both cards face up
-    void print_full_dealer_hand() {
-
-        cout << endl << " Dealer Hand:" << endl;
-        for (int i = 0; i < dealer_hand.cards.size(); i++)
-            dealer_hand.cards[i].print_card();
-        cout << " Value: " << dealer_hand.val[0];
-        if (dealer_hand.num_ace > 0 && dealer_hand.val[1] <= 21)
-            cout << " or " << dealer_hand.val[1];
-        cout << endl;
-    }
 
         // Deals two cards to each player
     void deal() {
@@ -206,37 +252,6 @@ public:
         }
     }
 
-        // Add a card from the deck to the player's hand
-    void player_hit() {
-        player_hand.add_card(deck[deck.size()-1]);
-        deck.pop_back();
-        if (player_hand.val[0] > 21) bust("player");
-        if (player_hand.val[0] == 21 
-        || player_hand.val[1] == 21) 
-            twenty_one("player");
-    }
-
-        // Add a card from the deck to the dealer's hand
-    void dealer_hit() {
-        dealer_hand.add_card(deck[deck.size()-1]);
-        deck.pop_back();
-        if (dealer_hand.val[0] > 21) bust("dealer");
-        if (dealer_hand.val[0] == 21 || dealer_hand.val[1] == 21) 
-            twenty_one("dealer");
-    }
-        // Set winner to player that did not Bust
-    void bust(string l) {
-        cout << " Bust!" << endl;
-        if (l == "player") winner = "dealer";
-        if (l == "dealer") winner = "player";
-    }
-
-        // Set winner to the player that get Blackjack
-    void twenty_one(string w) {
-        cout << " Blackjack!" << endl;
-        winner = w;
-    }
-
         // Score the game if no one Busts of gets Blackjack
     void score() {
         cout << endl;
@@ -261,17 +276,39 @@ public:
         }
         
     }
+        
+        // Resets the game
+    void reset() {
+        deck.clear();
+        player_hand.reset();
+        dealer_hand.reset();
+        winner = "none";
+        for (int i = 1; i <= 13; i++){
+            deck.push_back(card(i, "Hearts"));
+            deck.push_back(card(i, "Diamonds"));
+            deck.push_back(card(i, "Spades"));
+            deck.push_back(card(i, "Clubs"));
+        }
+        shuffle_deck();
+    } 
 };
 
 
 int main()
 {
     blackjack BJ;
-    BJ.deal();
-    BJ.print_player_hand();
-    BJ.print_dealer_hand();
-    BJ.player_turn();
-    BJ.dealer_turn();
-    BJ.score();
+    string play = "yes";
+    while (play == "yes") {
+        BJ.deal();
+        if (BJ.winner == "none") BJ.print_player_hand();
+        if (BJ.winner == "none") BJ.print_dealer_hand();
+        if (BJ.winner == "none") BJ.player_turn();
+        if (BJ.winner == "none") BJ.dealer_turn();
+        BJ.score();
+        cout << endl << "would you like to play again? (enter 'yes' or 'no'): ";
+        cin >> play;
+        cout << endl;
+        if (play == "yes") BJ.reset();
+    }
     return 0;
 }
